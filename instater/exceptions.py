@@ -1,0 +1,2 @@
+class InstaterError(Exception):
+    pass
