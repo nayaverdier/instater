@@ -2,7 +2,6 @@ from importlib import resources
 
 from rich.traceback import install
 
-from . import tasks
 from .exceptions import InstaterError
 from .main import run_tasks
 
@@ -14,5 +13,4 @@ __all__ = [
     "InstaterError",
     "VERSION",
     "run_tasks",
-    "tasks",
 ]

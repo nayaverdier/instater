@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 ROOT_DIRECTORY = Path(__file__).resolve().parent
@@ -38,7 +38,7 @@ setup(
     author="Naya Verdier",
     url="https://github.com/nayaverdier/instater",
     license="MIT",
-    packages=["instater"],
+    packages=find_packages(exclude=("tests",)),
     entry_points={"console_scripts": ["instater = instater.cli:main"]},
     install_requires=[
         "Jinja2==3.0.2",

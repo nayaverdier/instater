@@ -112,11 +112,15 @@ All currently defined tasks are listed below
 
 #### group
 
+#### hard_link
+
 #### include
 
 #### pacman
 
 #### service
+
+#### symlink
 
 #### template (alias of `copy`)
 
