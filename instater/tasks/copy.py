@@ -168,8 +168,3 @@ class Template(Copy):
     def __init__(self, **kwargs):
         kwargs.setdefault("is_template", True)
         super().__init__(**kwargs)
-
-
-class GetUrl(Copy):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)

@@ -3,11 +3,11 @@ from . import Task
 
 
 class Debug(Task):
-    def __init__(self, msg: str, **kwargs):
+    def __init__(self, debug: str, **kwargs):
         super().__init__(**kwargs)
 
-        self.msg = msg
+        self.debug = debug
 
     def run_action(self, context: Context) -> bool:
-        context.print(self.msg, style="white bold")
+        context.print(self.debug, style="white bold")
         return False

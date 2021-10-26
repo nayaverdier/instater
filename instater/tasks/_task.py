@@ -1,3 +1,5 @@
+import time
+
 from ..context import Context
 from ..exceptions import InstaterError
 from ..util import snake_case
@@ -22,21 +24,24 @@ class Task:
     def run_task(self, context: Context) -> bool:
         context.print(f"TASK [{self.name}]", style="black bold on blue", justify="left")
 
+        start = time.time()
+
         if self.when and context.jinja_string("{{ (" + self.when + ") == False }}") == "True":
             changed = False
         else:
             changed = self.run_action(context)
 
+        duration = context.duration(start)
         if changed:
             context.statuses["changed"] += 1
-            context.print("changed", style="yellow bold")
+            context.print(f"changed {duration}", style="yellow bold")
         else:
             context.statuses["skipped"] += 1
-            context.print("skipped", style="blue")
+            context.print(f"skipped {duration}", style="blue")
 
         if self.register:
             if self.register in context.variables:
-                raise InstaterError(f"Task registered as {self.register} conflicts with an existing variable")
+                raise InstaterError(f"Task registered as '{self.register}' conflicts with an existing variable")
             context.variables[self.register] = {"changed": changed}
 
         return changed

@@ -107,7 +107,7 @@ def _extract_with(task_args: dict) -> List[dict]:
 
 
 def _load_task_item(args: dict, tags: List[str], item: dict, context: Context):
-    tags = list(map(context.jinja_string, tags))
+    tags = [context.jinja_string(tag, extra_vars=item) for tag in tags]
 
     # special handling for "include" tasks since it needs to be loaded prior to
     # actually running the task (and prior to filtering out tags)

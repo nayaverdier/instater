@@ -8,11 +8,11 @@ from . import Task
 
 
 class Git(Task):
-    def __init__(self, *, repo: str, depth: int = None, dest: str, become: str = None, **kwargs):
+    def __init__(self, *, repo: str, dest: str, depth: int = None, become: str = None, **kwargs):
         super().__init__(**kwargs)
         self.repo = repo
-        self.depth = str(depth)
         self.dest = Path(dest)
+        self.depth = str(depth)
         self.become = become
 
     def _clone(self):

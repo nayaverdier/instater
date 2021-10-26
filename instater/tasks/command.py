@@ -11,9 +11,9 @@ class Command(Task):
     def __init__(
         self,
         command: Union[str, List[str]],
-        become: str = None,
         condition: str = None,
-        condition_code: str = "0",
+        condition_code: int = 0,
+        become: str = None,
         directory: str = None,
         **kwargs,
     ):
@@ -31,7 +31,7 @@ class Command(Task):
     def _parse_command(self, command: str) -> List[str]:
         cmd = shlex.split(command)
         if not cmd:
-            raise InstaterError(f"[{self.name}] No valid command specified")
+            raise InstaterError("No valid command specified")
 
         return cmd
 

@@ -6,8 +6,9 @@ from . import Task
 
 
 def _not_installed(package: str) -> bool:
-    result = util.shell(["pacman", "-Qi", package], valid_return_codes=(0, 1))
-    return result.return_code != 0
+    result_package = util.shell(["pacman", "-Qi", package], valid_return_codes=(0, 1))
+    result_group = util.shell(["pacman", "-Qg", package], valid_return_codes=(0, 1))
+    return result_package.return_code != 0 and result_group.return_code != 0
 
 
 class Pacman(Task):

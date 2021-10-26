@@ -29,7 +29,7 @@ class File(Task):
             mode = int(mode, 8)
 
         if not util.single_truthy(directory, symlink, hard_link, allow_zero=True):
-            raise InstaterError(f"[{self.name}] Must only provide ony of directory, symlink, or hard_link")
+            raise InstaterError("Must only provide ony of directory, symlink, or hard_link")
 
         if target and (not symlink and not hard_link):
             raise InstaterError("Must provide a target with symlink/hard_link")
@@ -42,6 +42,9 @@ class File(Task):
         self.directory = util.boolean(directory)
         self.symlink = util.boolean(symlink)
         self.hard_link = util.boolean(hard_link)
+
+        if target is not None and not self.symlink and not self.hard_link:
+            raise InstaterError("Argument `target` may only be used with symlink or hard_link files")
 
     def _create_file(self):
         self.path.parent.mkdir(parents=True, exist_ok=True)
