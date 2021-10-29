@@ -3,7 +3,7 @@
 ## 0.5.0 2021-10-28
 
 - Add `--version` option to the CLI to display the Instater version
-- **BREAKING** `aur`: Delete task (behavior moved into `pacman`)
+- `aur`: Now an alias of `pacman`, which supports `makepkg`
 - `pacman`: Add `aur` and `become` attributes
 - `pacman`: Add support for `makepkg` and `yay` installations
 

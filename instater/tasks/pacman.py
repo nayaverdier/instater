@@ -77,3 +77,9 @@ class Pacman(Task):
             self._install(not_installed)
 
         return True
+
+
+class Aur(Pacman):
+    def __init__(self, **kwargs):
+        kwargs["aur"] = True
+        super().__init__(**kwargs)

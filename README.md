@@ -141,7 +141,7 @@ Example of `with_fileglob`:
   with_fileglob: "applications/*"
 ```
 
-### `aur` (Arch User Repository)
+### `aur` (Arch User Repository, alias of `pacman`)
 
 Install packages from a Arch User Repository
 
@@ -445,12 +445,15 @@ tasks
 
 ### `pacman`
 
-Install arch linux packages using the `pacman` command
+Install Arch Linux packages using the `pacman`, `yay`, or `makepkg` commands
 
 #### Arguments
 
 - `packages` (string, [string]): The packages to install, can be a single package
   or a list of packages
+- `aur` (boolean, optional): If set to true, the packages will be installed from
+  the Arch User Repository using `yay` (or `makepkg` as a fallback)
+- `become` (string, optional): When `aur` is true, install using a specific user
 
 Examples:
 
@@ -463,6 +466,12 @@ Examples:
     packages:
     - python-setuptools
     - python-wheel
+- name: Install instater
+  pacman:
+    packages:
+      - instater
+    aur: true
+    become: makepkg
 ```
 
 ### `service`
