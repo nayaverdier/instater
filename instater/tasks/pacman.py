@@ -60,7 +60,7 @@ class Pacman(Task):
 
     def _install(self, packages: List[str]):
         if self.aur:
-            if not shutil.which("yay"):
+            if shutil.which("yay"):
                 self._yay_install(packages)
             else:
                 self._makepkg_install(packages)

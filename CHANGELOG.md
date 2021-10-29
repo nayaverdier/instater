@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0 2021-10-29
+
+- `aur`: Fix bug negating the condition for using `yay` vs `makepkg`
+
 ## 0.5.0 2021-10-28
 
 - Add `--version` option to the CLI to display the Instater version
