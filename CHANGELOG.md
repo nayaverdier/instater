@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 2021-10-28
+
+- `user`: Support `create_home` argument
+
 ## 0.3.0 2021-10-25
 
 - **BREAKING** Use absolute path for the `instater_dir` variable
