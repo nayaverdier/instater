@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0 2021-10-28
+
+- Add `--version` option to the CLI to display the Instater version
+- **BREAKING** `aur`: Delete task (behavior moved into `pacman`)
+- `pacman`: Add `aur` and `become` attributes
+- `pacman`: Add support for `makepkg` and `yay` installations
+
 ## 0.4.0 2021-10-28
 
 - `user`: Support `create_home` argument

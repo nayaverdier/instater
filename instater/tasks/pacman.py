@@ -1,4 +1,8 @@
+import shutil
+import tempfile
 from typing import List, Union
+
+from instater.exceptions import InstaterError
 
 from .. import util
 from ..context import Context
@@ -12,16 +16,56 @@ def _not_installed(package: str) -> bool:
 
 
 class Pacman(Task):
-    def __init__(self, *, packages: Union[str, List[str]], **kwargs):
+    def __init__(self, *, packages: Union[str, List[str]], aur: util.Bool = False, become: str = None, **kwargs):
         super().__init__(**kwargs)
 
         if isinstance(packages, str):
             packages = [packages]
 
         self.packages = packages
+        self.aur = util.boolean(aur)
+        self.become = become
+
+        if self.become and not self.aur:
+            raise InstaterError("Can only specify 'become' when using 'aur'")
+
+    # TODO: this currently requires root to run properly (to delete the cloned directory created by another user)
+    def _makepkg_install_package(self, package: str):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            if self.become:
+                util.shell(["chown", self.become, tmpdir])
+
+            clone_dir = tmpdir + "/" + package
+
+            util.shell(
+                ["git", "clone", "--depth", "1", f"https://aur.archlinux.org/{package}.git", clone_dir],
+                become=self.become,
+            )
+
+            util.shell(
+                ["makepkg", "--syncdeps", "--install", "--noconfirm", "--needed"],
+                directory=clone_dir,
+                become=self.become,
+            )
+
+    def _makepkg_install(self, packages: List[str]):
+        for package in packages:
+            self._makepkg_install_package(package)
+
+    def _yay_install(self, packages: List[str]):
+        util.shell(["yay", "-Sy", "--noconfirm", "--needed", "--cleanafter", *packages])
+
+    def _pacman_install(self, packages: List[str]):
+        util.shell(["pacman", "-Sy", "--noconfirm", "--noprogressbar", "--needed", *packages])
 
     def _install(self, packages: List[str]):
-        util.shell(["pacman", "-Sy", "--noconfirm", "--noprogressbar", "--needed", *packages])
+        if self.aur:
+            if not shutil.which("yay"):
+                self._yay_install(packages)
+            else:
+                self._makepkg_install(packages)
+        else:
+            self._pacman_install(packages)
 
     def run_action(self, context: Context) -> bool:
         not_installed = list(filter(_not_installed, self.packages))
@@ -31,30 +75,5 @@ class Pacman(Task):
 
         if not context.dry_run:
             self._install(not_installed)
-
-        return True
-
-
-# TODO: possible to just combine this with Pacman class, with
-# a flag to decide makepkg/yay/pacman for installation method?
-class Aur(Task):
-    def __init__(self, *, packages: Union[str, List[str]], become: str = None, **kwargs):
-        super().__init__(**kwargs)
-
-        if isinstance(packages, str):
-            packages = [packages]
-
-        self.packages = packages
-        self.become = become
-
-    def run_action(self, context: Context) -> bool:
-        not_installed = list(filter(_not_installed, self.packages))
-
-        if not not_installed:
-            return False
-
-        if not context.dry_run:
-            # TODO: support makepkg directly instead of just yay?
-            util.shell(["yay", "-Sy", "--noconfirm", "--needed", "--cleanafter", *not_installed], become=self.become)
 
         return True

@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 from rich.console import Console
 
-from instater import InstaterError, run_tasks
+from instater import VERSION, InstaterError, run_tasks
 
 
 def _parse_variables(vars: str) -> dict:
@@ -43,8 +43,13 @@ def main():
         action="store_true",
         help="Display operations that would be performed without actually running them",
     )
+    parser.add_argument("--version", action="store_true", help="Display the version of instater")
 
     args = parser.parse_args()
+
+    if args.version:
+        Console().print(f"Instater {VERSION}")
+        return
 
     tags = args.tags
 
