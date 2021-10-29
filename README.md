@@ -308,7 +308,7 @@ Create a directory. Same as passing `directory: true` to the [`file`](#file) tas
     mode: 0700
 ```
 
-### file
+### `file`
 
 Create an empty file, directory, symlink, or hard link on the file system.
 
@@ -367,7 +367,7 @@ At most one of `directory`, `symlink`, and `hard_link` may be provided
     directory: true
 ```
 
-### git
+### `git`
 
 Clone or update a git repository
 
@@ -394,7 +394,7 @@ Clone or update a git repository
     become: myuser
 ```
 
-### group
+### `group`
 
 Create a UNIX group
 
@@ -409,7 +409,7 @@ Create a UNIX group
   group: mygroup
 ```
 
-### hard_link
+### `hard_link`
 
 Create a hard link to a file
 
@@ -426,7 +426,7 @@ Create a hard link to a file
     target: /path/to/existing/file
 ```
 
-### include
+### `include`
 
 Include another YAML file containing tasks, to allow for better organization of
 tasks
@@ -443,7 +443,7 @@ tasks
   with_fileglob: "tasks/applications/*"
 ```
 
-### pacman
+### `pacman`
 
 Install arch linux packages using the `pacman` command
 
@@ -465,7 +465,7 @@ Examples:
     - python-wheel
 ```
 
-### service
+### `service`
 
 Start, enable, or disable a systemctl service
 
@@ -489,7 +489,7 @@ Start, enable, or disable a systemctl service
     started: true
 ```
 
-### symlink
+### `symlink`
 
 Create a symlink to a file or directory
 
@@ -506,7 +506,7 @@ Create a symlink to a file or directory
     target: /path/to/existing/file
 ```
 
-### template
+### `template`
 
 Copy data, transforming the content as a Jinja2 template prior to writing.
 Same as passing `is_template: true` to [`copy`](#copy)
@@ -527,7 +527,7 @@ Same as passing `is_template: true` to [`copy`](#copy)
     mode: 0644
 ```
 
-### user
+### `user`
 
 Create a UNIX user
 
@@ -536,6 +536,8 @@ Create a UNIX user
 - `user` (string): The name of the user to create
 - `system` (boolean, optional): Whether or not this user is a system user (only
   used when the user needs to be created)
+- `create_home` (boolean, optional): Whether or not a home directory for this user
+  should be created
 - `password` (string, optional): A hashed password to set as the user's password
   (only used when the user needs to be created )
 - `shell` (string, optional): The login shell to use for the user

@@ -10,11 +10,14 @@ def _user_exists(user: str) -> bool:
     return result.return_code == 0
 
 
-def _create_user(user: str, system: bool, password: Optional[str]):
+def _create_user(user: str, system: bool, create_home: bool, password: Optional[str]):
     command = ["useradd", user]
 
     if system:
         command.append("--system")
+
+    if create_home:
+        command.append("--create-home")
 
     if password:
         command.append("--password")
@@ -47,6 +50,7 @@ class User(Task):
         self,
         user: str,
         system: util.Bool = None,
+        create_home: util.Bool = None,
         password: str = None,
         shell: str = None,
         groups: Union[str, List[str]] = None,
@@ -59,6 +63,7 @@ class User(Task):
 
         self.user = user
         self.system = util.boolean(system)
+        self.create_home = util.boolean(create_home)
         self.password = password
         self.shell = shell
         self.groups = groups or []
@@ -69,7 +74,7 @@ class User(Task):
         user_exists = _user_exists(self.user)
         if not user_exists:
             if not context.dry_run:
-                _create_user(self.user, self.system, self.password)
+                _create_user(self.user, self.system, self.create_home, self.password)
             updated = True
             missing_groups: Iterable[str] = self.groups
         else:
