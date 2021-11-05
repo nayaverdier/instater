@@ -19,6 +19,7 @@ def _jinja_environment(root_directory: Path) -> Environment:
     env = Environment(loader=FileSystemLoader(root_directory))
     env.filters["password_hash"] = util.password_hash
     env.filters["filename"] = _filename
+    env.filters["bool"] = bool
     return env
 
 

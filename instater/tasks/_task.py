@@ -26,7 +26,7 @@ class Task:
 
         start = time.time()
 
-        if self.when and context.jinja_string("{{ (" + self.when + ") == False }}") == "True":
+        if self.when and context.jinja_string("{{ (" + self.when + ") | bool }}") == "False":
             changed = False
         else:
             changed = self.run_action(context)

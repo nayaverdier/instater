@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0 2021-11-04
+
+- Better support `when` argument so that undefined variables are
+  counted as a falsey variable
+
 ## 0.6.0 2021-10-29
 
 - `aur`: Fix bug negating the condition for using `yay` vs `makepkg`
