@@ -1,4 +1,3 @@
-import shlex
 from typing import List, Union
 
 from .. import util

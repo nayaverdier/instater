@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0 2021-11-06
+
+- `command`: Support pipes between two commands
+
 ## 0.7.0 2021-11-04
 
 - Better support `when` argument so that undefined variables are
