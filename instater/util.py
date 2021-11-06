@@ -19,19 +19,22 @@ class ShellResult:
 
 
 def shell(
-    command: List[str],
+    command: Union[str, List[str]],
     directory: Union[str, Path] = None,
     become: str = None,
     valid_return_codes: Optional[Iterable[int]] = (0,),
-):
+) -> ShellResult:
     if become:
-        command = ["sudo", "-u", become] + command
+        if isinstance(command, str):
+            command = f"sudo -u {become} {command}"
+        else:
+            command = ["sudo", "-u", become] + command
 
-    result = subprocess.run(command, cwd=directory, capture_output=True)
+    shell = isinstance(command, str)
+    result = subprocess.run(command, cwd=directory, shell=shell, capture_output=True)
     if valid_return_codes and result.returncode not in valid_return_codes:
-        command_str = " ".join(command)
         error = result.stderr.decode("utf-8")
-        raise InstaterError(f"Unexpected error from '{command_str}' (exit code {result.returncode}):\n\n{error}")
+        raise InstaterError(f"Unexpected error from '{command}' (exit code {result.returncode}):\n\n{error}")
 
     return ShellResult(result.returncode, result.stdout.decode("utf-8").strip(), result.stderr.decode("utf-8").strip())
 

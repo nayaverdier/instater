@@ -172,14 +172,19 @@ Run arbitrary shell commands (can be risky)
 #### Arguments
 
 - `command` (string, [string]): The command or commands to execute
-- `condition` (string, optional): A command to run prior to the `command`, as a
-  condition for whether or not it should actually be executed
-- `condition_code` (int, optional): The return code from the `condition` command
-  to match against. If the `condition` returns this code, the `command` will be
-  executed. Defaults to 0
-- `become` (string, optional): A user to become while running the commands
-  (including the condition command)
-- `directory` (string, optional): The working directory to use while running the commands
+- `condition` (string, optional): A command to run prior to the
+  `command`, as a condition for whether or not it should actually be
+  executed
+- `condition_code` (int, optional): The return code from the
+  `condition` command to match against. If the `condition` returns this
+  code, the `command` will be executed. Defaults to 0
+- `become` (string, optional): A user to become while running the
+  commands (including the condition command)
+- `directory` (string, optional): The working directory to use while
+  running the commands
+
+Note that the command and conditions may make use of pipes, for example
+`curl -s https://get.sdkman.io | bash`
 
 Examples:
 
