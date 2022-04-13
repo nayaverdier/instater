@@ -102,11 +102,10 @@ def _extract_with(context: Context, task_args: dict) -> List[dict]:
         raise InstaterError("Must provide at most one `with_*` looping attribute")
 
     if fileglob:
-        root_dir = None
         if not fileglob.startswith("/"):
-            root_dir = str(context.root_directory)
+            fileglob = str(context.root_directory) + "/" + fileglob
 
-        return [{"item": path} for path in glob(fileglob, root_dir=root_dir, recursive=True)]
+        return [{"item": path} for path in glob(fileglob, recursive=True)]
 
     return [{}]
 
@@ -247,11 +246,11 @@ def run_tasks(
     override_variables: dict = None,
     tags: Iterable[str] = None,
     dry_run: bool = False,
-    skip_run: bool = False,
+    skip_tasks: bool = False,
 ):
     context = _load_context(setup_file, override_variables, tags, dry_run)
 
-    if not skip_run:
+    if not skip_tasks:
         for task in context.tasks:
             task.run_task(context)
             print()
