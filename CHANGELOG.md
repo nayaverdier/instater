@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0 2022-04-12
+
+- Add check for manually installed pacman packages when using Arch Linux
+- Add `--skip-tasks` argument to skip all tasks (useful for the pacman
+  package check)
+- Fix bug where relative paths were not resolving when instater was run
+  from a directory other than the one containing the setup.yml file
+
 ## 0.8.0 2021-11-06
 
 - `command`: Support pipes between two commands

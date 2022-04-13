@@ -39,6 +39,11 @@ def main():
     parser.add_argument("--tags", nargs="*", help="Run only a subset of tasks by their tag")
     parser.add_argument("--vars", help="Variables to override prompts or variable files")
     parser.add_argument(
+        "--skip-tasks",
+        action="store_true",
+        help="Do not actually run tasks (useful for just checking for manually installed pacman packages)",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Display operations that would be performed without actually running them",
@@ -55,7 +60,7 @@ def main():
 
     try:
         variables = _parse_variables(args.vars)
-        run_tasks(args.setup_file, variables, tags, args.dry_run)
+        run_tasks(args.setup_file, variables, tags, args.dry_run, skip_tasks=args.skip_tasks)
     except InstaterError as e:
         console = Console()
         console.print(e, style="red")

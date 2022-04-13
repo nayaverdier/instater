@@ -1,4 +1,5 @@
 import getpass
+import shutil
 from glob import glob
 from pathlib import Path
 from typing import Iterable, List, Union
@@ -8,7 +9,7 @@ import yaml  # type: ignore
 from . import util
 from .context import Context
 from .exceptions import InstaterError
-from .tasks import TASKS
+from .tasks import TASKS, pacman
 
 
 def _print_start(context: Context, setup_file: Path):
@@ -94,14 +95,18 @@ def _file_variables(files, context: Context):
             context.variables[var] = context.jinja_string(value)
 
 
-def _extract_with(task_args: dict) -> List[dict]:
+def _extract_with(context: Context, task_args: dict) -> List[dict]:
     fileglob = task_args.pop("with_fileglob", None)
 
     if not util.single_truthy(fileglob, allow_zero=True):
         raise InstaterError("Must provide at most one `with_*` looping attribute")
 
     if fileglob:
-        return [{"item": path} for path in glob(fileglob, recursive=True)]
+        root_dir = None
+        if not fileglob.startswith("/"):
+            root_dir = str(context.root_directory)
+
+        return [{"item": path} for path in glob(fileglob, root_dir=root_dir, recursive=True)]
 
     return [{}]
 
@@ -146,7 +151,7 @@ def _load_task_item(args: dict, tags: List[str], item: dict, context: Context):
 
 
 def _load_task(task_args: dict, tags: List[str], context: Context):
-    with_items = _extract_with(task_args)
+    with_items = _extract_with(context, task_args)
     for item in with_items:
         _load_task_item(task_args.copy(), tags, item, context)
 
@@ -187,7 +192,12 @@ def _include(context: Context, parent_tags: List[str], include: str, tags: Union
     _load_tasks(tasks, context, tags)
 
 
-def run_tasks(setup_file, override_variables: dict = None, tags: Iterable[str] = None, dry_run: bool = False):
+def _load_context(
+    setup_file,
+    override_variables: dict = None,
+    tags: Iterable[str] = None,
+    dry_run: bool = False,
+) -> Context:
     setup_file = Path(setup_file)
     context = Context(setup_file.parent, override_variables or {}, tags or (), dry_run)
 
@@ -208,9 +218,47 @@ def run_tasks(setup_file, override_variables: dict = None, tags: Iterable[str] =
     _file_variables(setup_data.get("vars_files"), context)
     _load_tasks(setup_data.get("tasks"), context)
 
+    return context
+
+
+def _alert_pacman_manually_installed(context: Context):
+    packages = set()
+
     for task in context.tasks:
-        task.run_task(context)
+        if isinstance(task, pacman.Pacman):
+            for package in task.packages:
+                packages.update(pacman.get_package_or_group_packages(package))
+
+    explicitly_installed_packages = pacman.get_explicitly_installed_packages()
+    manually_installed = explicitly_installed_packages - packages
+
+    if manually_installed:
         print()
+        context.print(
+            ":warning: The following packages were manually installed and are not accounted for by instater",
+            style="yellow bold",
+        )
+        for package in manually_installed:
+            context.print("  - " + package, style="bold")
+
+
+def run_tasks(
+    setup_file,
+    override_variables: dict = None,
+    tags: Iterable[str] = None,
+    dry_run: bool = False,
+    skip_run: bool = False,
+):
+    context = _load_context(setup_file, override_variables, tags, dry_run)
+
+    if not skip_run:
+        for task in context.tasks:
+            task.run_task(context)
+            print()
 
     context.print_summary()
+
+    if shutil.which("pacman"):
+        _alert_pacman_manually_installed(context)
+
     return context

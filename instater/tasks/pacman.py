@@ -1,6 +1,6 @@
 import shutil
 import tempfile
-from typing import List, Union
+from typing import List, Set, Union
 
 from instater.exceptions import InstaterError
 
@@ -83,3 +83,16 @@ class Aur(Pacman):
     def __init__(self, **kwargs):
         kwargs["aur"] = True
         super().__init__(**kwargs)
+
+
+def get_explicitly_installed_packages() -> Set[str]:
+    output = util.shell(["pacman", "-Qe"])
+    return set(line.split()[0] for line in output.stdout.splitlines() if line)
+
+
+def get_package_or_group_packages(package: str) -> Set[str]:
+    group_output = util.shell(["pacman", "-Qg", package], valid_return_codes=(0, 1))
+    if group_output.return_code == 1:
+        return {package}
+    else:
+        return set(line.split()[1] for line in group_output.stdout.splitlines())
