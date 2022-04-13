@@ -14,7 +14,7 @@ version = (ROOT_DIRECTORY / "instater" / "VERSION").read_text().strip()
 
 
 DEV_REQUIRES = [
-    "black==21.9b0",
+    "black==22.3.0",
     "coverage==6.0.2",
     "flake8==4.0.1",
     "flake8-bugbear==21.9.2",
