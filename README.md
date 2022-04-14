@@ -381,6 +381,7 @@ Clone or update a git repository
 - `repo` (string): The git repo uri to clone
 - `dest` (string): The destination path to clone into
 - `depth` (integer, optional): Creates a shallow clone with truncated history
+- `fetch_tags` (boolean, optional): Whether or not to fetch git tags (defaults to true)
 - `become` (string, optional): The UNIX user that should be used to run git commands
 
 #### Example

@@ -8,11 +8,14 @@ from . import Task
 
 
 class Git(Task):
-    def __init__(self, *, repo: str, dest: str, depth: int = None, become: str = None, **kwargs):
+    def __init__(
+        self, *, repo: str, dest: str, depth: int = None, fetch_tags: bool = True, become: str = None, **kwargs
+    ):
         super().__init__(**kwargs)
         self.repo = repo
         self.dest = Path(dest)
         self.depth = str(depth)
+        self.tags_flag = "--tags" if fetch_tags else "--no-tags"
         self.become = become
 
     def _clone(self):
@@ -28,12 +31,12 @@ class Git(Task):
         return result.stdout
 
     def _should_pull(self) -> bool:
-        result = util.shell(["git", "fetch", "--dry-run"], directory=self.dest, become=self.become)
+        result = util.shell(["git", "fetch", "--dry-run", self.tags_flag], directory=self.dest, become=self.become)
         return result.stdout != "" or result.stderr != ""
 
     def _pull(self):
         branch = util.shell(["git", "branch", "--show-current"], directory=self.dest, become=self.become).stdout
-        util.shell(["git", "pull", "origin", branch], directory=self.dest, become=self.become)
+        util.shell(["git", "pull", "origin", branch, self.tags_flag], directory=self.dest, become=self.become)
 
     def run_action(self, context: Context):
         if not self.dest.exists():

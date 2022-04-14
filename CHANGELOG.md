@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0 2022-04-13
+
+- Add `fetch_tags` argument to `git` task
+
 ## 0.9.0 2022-04-12
 
 - Add check for manually installed pacman packages when using Arch Linux
