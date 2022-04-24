@@ -65,6 +65,7 @@ class File(Task):
         updated = False
 
         if not self.path.exists():
+            context.explain_change(f"Path does not exist: {self.path}")
             if not context.dry_run:
                 if self.directory:
                     self._create_directory()
@@ -87,7 +88,10 @@ class File(Task):
             if not self.path.is_file():
                 raise InstaterError(f"Path exists but is not a file: {self.path}")
 
-        updated |= util.update_file_metadata(self.path, self.owner, self.group, self.mode, context.dry_run)
+        updated |= util.update_file_metadata(self.path, self.owner, self.group, self.mode, context)
+
+        if not updated:
+            context.explain_skip(f"Path {self.path} already is in the correct state")
 
         return updated
 

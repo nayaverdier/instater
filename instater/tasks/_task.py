@@ -27,6 +27,7 @@ class Task:
         start = time.time()
 
         if self.when and context.jinja_string("{{ (" + self.when + ") | bool }}") == "False":
+            context.explain_skip(f"when condition failed: {self.when}")
             changed = False
         else:
             changed = self.run_action(context)

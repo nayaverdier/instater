@@ -17,7 +17,7 @@ def import_submodules(module_name: str):
 
     module = sys.modules[module_name]
 
-    path = Path(module.__file__).parent.absolute()
+    path = Path(module.__file__).parent.resolve()
     prefix = module.__name__
     paths = [str(path)]
 

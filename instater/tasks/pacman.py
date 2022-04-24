@@ -71,8 +71,12 @@ class Pacman(Task):
         not_installed = list(filter(_not_installed, self.packages))
 
         if not not_installed:
+            package_str = ", ".join(self.packages)
+            context.explain_skip(f"Specified packages are already installed: {package_str}")
             return False
 
+        not_installed_str = ", ".join(not_installed)
+        context.explain_change(f"The following packages are not yet installed: {not_installed_str}")
         if not context.dry_run:
             self._install(not_installed)
 

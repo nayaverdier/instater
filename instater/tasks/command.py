@@ -28,13 +28,24 @@ class Command(Task):
 
     def run_action(self, context: Context) -> bool:
         if self.condition:
-            # TODO: only consider specific return codes as valid?
             result = util.shell(self.condition, self.directory, valid_return_codes=None)
             if result.return_code != self.condition_code:
+                context.explain_skip(
+                    f"Condition command returned with code {result.return_code}, "
+                    f"required return code {self.condition_code}"
+                )
                 return False
 
-        if not context.dry_run:
-            for command in self.commands:
-                util.shell(command, self.directory, become=self.become)
+        for command in self.commands:
+            explain_message = f"Running command {command}"
+            if self.directory:
+                explain_message += f" from directory '{self.directory}'"
+            if self.become:
+                explain_message += f" as user '{self.become}'"
+            context.explain_change(explain_message)
+
+            if not context.dry_run:
+                result = util.shell(command, self.directory, become=self.become)
+                context.explain_change(f"  -> {result.stdout}")
 
         return True

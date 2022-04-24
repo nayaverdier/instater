@@ -48,6 +48,11 @@ def main():
         action="store_true",
         help="Display operations that would be performed without actually running them",
     )
+    parser.add_argument(
+        "--explain",
+        action="store_true",
+        help="Include messages for each task explaining why the task was changed or skipped",
+    )
     parser.add_argument("--version", action="store_true", help="Display the version of instater")
 
     args = parser.parse_args()
@@ -60,7 +65,14 @@ def main():
 
     try:
         variables = _parse_variables(args.vars)
-        run_tasks(args.setup_file, variables, tags, args.dry_run, skip_tasks=args.skip_tasks)
+        run_tasks(
+            setup_file=args.setup_file,
+            override_variables=variables,
+            tags=tags,
+            dry_run=args.dry_run,
+            explain=args.explain,
+            skip_tasks=args.skip_tasks,
+        )
     except InstaterError as e:
         console = Console()
         console.print(e, style="red")

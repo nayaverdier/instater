@@ -54,7 +54,7 @@ class User(Task):
         password: str = None,
         shell: str = None,
         groups: Union[str, List[str]] = None,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
 
@@ -73,6 +73,7 @@ class User(Task):
 
         user_exists = _user_exists(self.user)
         if not user_exists:
+            context.explain_change(f"User '{self.user}' does not exist")
             if not context.dry_run:
                 _create_user(self.user, self.system, self.create_home, self.password)
             updated = True
@@ -82,14 +83,21 @@ class User(Task):
             missing_groups = set(self.groups) - set(all_groups)
 
         if missing_groups:
+            missing_groups_str = ", ".join(missing_groups)
+            context.explain_change(f"User '{self.user}' does not have the following groups: {missing_groups_str}")
             if not context.dry_run:
                 _add_groups(self.user, self.groups)
             updated = True
 
-        if self.shell is not None and self.shell != _get_shell(self.user):
+        actual_shell = _get_shell(self.user)
+        if self.shell is not None and self.shell != actual_shell:
+            context.explain_change(f"User '{self.user}' has the shell {actual_shell}, should be {self.shell}")
             _set_shell(self.user, self.shell)
             updated = True
 
         # TODO: detect if password needs to change?
+
+        if not updated:
+            context.explain_skip(f"User '{self.user}' is already in the correct state")
 
         return updated

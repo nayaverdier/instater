@@ -23,17 +23,23 @@ class Service(Task):
         updated = False
 
         if self.started and not self._is_started():
+            context.explain_change(f"Service {self.service} is not started")
             if not context.dry_run:
                 util.shell(["systemctl", "start", self.service])
             updated = True
 
         if self.enabled and not self._is_enabled():
+            context.explain_change(f"Service {self.service} is not enabled")
             if not context.dry_run:
                 util.shell(["systemctl", "enable", self.service])
             updated = True
         elif not self.enabled and self._is_enabled():
+            context.explain_change(f"Service {self.service} is not disabled")
             if not context.dry_run:
                 util.shell(["systemctl", "disable", self.service])
             updated = True
+
+        if not updated:
+            context.explain_skip(f"Service {self.service} is in the correct state")
 
         return updated

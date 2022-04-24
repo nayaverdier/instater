@@ -191,35 +191,6 @@ def _include(context: Context, parent_tags: List[str], include: str, tags: Union
     _load_tasks(tasks, context, tags)
 
 
-def _load_context(
-    setup_file,
-    override_variables: dict = None,
-    tags: Iterable[str] = None,
-    dry_run: bool = False,
-) -> Context:
-    setup_file = Path(setup_file)
-    context = Context(setup_file.parent, override_variables or {}, tags or (), dry_run)
-
-    if not setup_file.exists():
-        raise InstaterError(f"Setup file does not exist: {setup_file}")
-
-    _print_start(context, setup_file)
-
-    with setup_file.open() as f:
-        setup_data = yaml.safe_load(f)
-
-    if isinstance(setup_data, list):
-        if len(setup_data) > 1:
-            raise InstaterError(f"Cannot specify multiple root list items in {setup_file}")
-        setup_data = setup_data[0]
-
-    _prompt_variables(setup_data.get("vars_prompt"), context)
-    _file_variables(setup_data.get("vars_files"), context)
-    _load_tasks(setup_data.get("tasks"), context)
-
-    return context
-
-
 def _alert_pacman_manually_installed(context: Context):
     packages = set()
 
@@ -246,9 +217,28 @@ def run_tasks(
     override_variables: dict = None,
     tags: Iterable[str] = None,
     dry_run: bool = False,
+    explain: bool = False,
     skip_tasks: bool = False,
 ):
-    context = _load_context(setup_file, override_variables, tags, dry_run)
+    setup_file = Path(setup_file)
+    context = Context(setup_file.parent, override_variables or {}, tags or (), dry_run, explain)
+
+    if not setup_file.exists():
+        raise InstaterError(f"Setup file does not exist: {setup_file}")
+
+    _print_start(context, setup_file)
+
+    with setup_file.open() as f:
+        setup_data = yaml.safe_load(f)
+
+    if isinstance(setup_data, list):
+        if len(setup_data) > 1:
+            raise InstaterError(f"Cannot specify multiple root list items in {setup_file}")
+        setup_data = setup_data[0]
+
+    _prompt_variables(setup_data.get("vars_prompt"), context)
+    _file_variables(setup_data.get("vars_files"), context)
+    _load_tasks(setup_data.get("tasks"), context)
 
     if not skip_tasks:
         for task in context.tasks:
@@ -257,7 +247,8 @@ def run_tasks(
 
     context.print_summary()
 
-    if shutil.which("pacman"):
+    # Don't run this check when a subset of tags were passed in, since not all tasks are loaded
+    if not tags and shutil.which("pacman"):
         _alert_pacman_manually_installed(context)
 
     return context

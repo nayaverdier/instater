@@ -24,12 +24,20 @@ def _jinja_environment(root_directory: Path) -> Environment:
 
 
 class Context:
-    def __init__(self, root_directory: Path, extra_vars: dict, tags: Iterable[str], dry_run: bool = False):
+    def __init__(
+        self,
+        root_directory: Path,
+        extra_vars: dict,
+        tags: Iterable[str],
+        dry_run: bool = False,
+        explain: bool = False,
+    ):
         self.root_directory = root_directory
         self.tags = set(tags)
         self.dry_run = dry_run
+        self.explain = explain
 
-        extra_vars["instater_dir"] = str(root_directory.absolute())
+        extra_vars["instater_dir"] = str(root_directory.resolve())
         self.variables = extra_vars
 
         self.jinja_env = _jinja_environment(root_directory)
@@ -79,3 +87,22 @@ class Context:
         self.print(f"  skipped: {skipped}", style="blue")
         # if this used style="yellow", the integer count would be turned blue by rich
         self.print(f"  [yellow]changed: {changed}[/yellow]")
+
+    def explain_skip(self, message: str):
+        if self.explain:
+            self.print(message + "\n", style="blue")
+
+    def explain_change(self, message: str):
+        if self.explain:
+            if self.dry_run:
+                message = "[dry_run] " + message
+
+            self.print(message + "\n", style="yellow bold")
+
+    def explain_change_diff(self, a: str, b: str, file_a: str, file_b: str):
+        if self.explain:
+            diff = util.diff_lines(a, b, file_a, file_b)
+            if self.dry_run:
+                diff = "[dry_run]\n" + diff
+
+            self.print(diff + "\n")

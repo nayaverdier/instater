@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.0 2022-04-24
+
+- Fix `instater_dir` template variable to be a proper absolute path
+  (previously, relative paths could appear like `/path/to/cwd/../another_dir/setup.yml`)
+- Add `--explain` flag to show reasoning for each changed/skipped task
+- Do not run the pacman package comparison when specifying `--tags`,
+  since in that situation the comparison is not complete
+
 ## 0.10.0 2022-04-13
 
 - Add `fetch_tags` argument to `git` task
