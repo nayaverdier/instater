@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.0 2023-04-24
+
+- Add `pacman_bootstrapped_packages` option to ignore certain packages from the
+  manually installed checks
+- Add `--quiet` or `-q` flag which does not print any information for skipped
+  tasks
+
 ## 0.11.0 2022-04-24
 
 - Fix `instater_dir` template variable to be a proper absolute path

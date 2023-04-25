@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 from rich.console import Console
 
-from instater import VERSION, InstaterError, run_tasks
+from instater import InstaterError, __version__, run_tasks
 
 
 def _parse_variables(vars: str) -> dict:
@@ -59,7 +59,7 @@ def main():
     args = parser.parse_args()
 
     if args.version:
-        Console().print(f"Instater {VERSION}")
+        Console().print(f"Instater {__version__}")
         return
 
     tags = args.tags

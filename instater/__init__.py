@@ -1,4 +1,9 @@
-from importlib import resources
+try:
+    # Python 3.8+
+    import importlib.metadata as _metadata
+except ModuleNotFoundError:  # pragma: no cover
+    # Python 3.7
+    import importlib_metadata as _metadata  # type: ignore
 
 from rich.traceback import install
 
@@ -7,10 +12,10 @@ from .main import run_tasks
 
 install()
 
-VERSION = resources.read_text("instater", "VERSION").strip()
+__version__ = _metadata.version("instater")
 
 __all__ = [
     "InstaterError",
-    "VERSION",
+    "__version__",
     "run_tasks",
 ]
