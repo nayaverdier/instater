@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from instater.exceptions import InstaterError
 
@@ -9,7 +10,14 @@ from . import Task
 
 class Git(Task):
     def __init__(
-        self, *, repo: str, dest: str, depth: int = None, fetch_tags: bool = True, become: str = None, **kwargs
+        self,
+        *,
+        repo: str,
+        dest: str,
+        depth: Optional[int] = None,
+        fetch_tags: bool = True,
+        become: Optional[str] = None,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.repo = repo

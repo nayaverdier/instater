@@ -142,7 +142,7 @@ def _load_task_item(args: dict, tags: List[str], item: dict, context: Context):
     replaced_args = {key: context.jinja_object(value, extra_vars=item) for key, value in all_args.items()}
 
     try:
-        context.tasks.append(TaskClass(**replaced_args))
+        context.tasks.append(TaskClass(**replaced_args))  # type: ignore
     except (InstaterError, TypeError) as e:
         name = args.get("name")
         error_name = f"'{name}' ({task_name})" if name else f"'{task_name}'"
@@ -155,7 +155,7 @@ def _load_task(task_args: dict, tags: List[str], context: Context):
         _load_task_item(task_args.copy(), tags, item, context)
 
 
-def _load_tasks(task_list, context: Context, extra_tags: List[str] = None):
+def _load_tasks(task_list, context: Context, extra_tags: Optional[List[str]] = None):
     if not task_list:
         return
 
@@ -174,7 +174,7 @@ def _load_tasks(task_list, context: Context, extra_tags: List[str] = None):
 
 
 # TODO: keep track of previously included files to prevent circular dependencies
-def _include(context: Context, parent_tags: List[str], include: str, tags: Union[str, List[str]] = None):
+def _include(context: Context, parent_tags: List[str], include: str, tags: Union[str, List[str], None] = None):
     include_file = context.root_directory / include
     if not include_file.exists():
         raise InstaterError(f"Included file does not exist: {include_file}")

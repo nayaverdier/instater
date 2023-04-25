@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 from instater.exceptions import InstaterError
 
@@ -14,10 +14,10 @@ class File(Task):
         self,
         *,
         path: str,
-        target: str = None,
-        owner: str = None,
-        group: str = None,
-        mode: Union[str, int] = None,
+        target: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        mode: Optional[Union[str, int]] = None,
         directory: util.Bool = False,
         symlink: util.Bool = False,
         hard_link: util.Bool = False,

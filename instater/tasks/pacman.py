@@ -1,6 +1,6 @@
 import shutil
 import tempfile
-from typing import List, Set, Union
+from typing import List, Optional, Set, Union
 
 from instater.exceptions import InstaterError
 
@@ -16,7 +16,14 @@ def _not_installed(package: str) -> bool:
 
 
 class Pacman(Task):
-    def __init__(self, *, packages: Union[str, List[str]], aur: util.Bool = False, become: str = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        packages: Union[str, List[str]],
+        aur: util.Bool = False,
+        become: Optional[str] = None,
+        **kwargs,
+    ):
         super().__init__(**kwargs)
 
         if isinstance(packages, str):

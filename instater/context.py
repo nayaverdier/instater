@@ -3,7 +3,7 @@ import time
 import typing
 from collections import Counter
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from jinja2 import Environment, FileSystemLoader
 from rich.console import Console
@@ -80,7 +80,7 @@ class Context:
             else:
                 self.console.print(*args, **kwargs)
 
-    def jinja_object(self, template: object, extra_vars: dict = None) -> object:
+    def jinja_object(self, template: object, extra_vars: Optional[dict] = None) -> object:
         if isinstance(template, str):
             return self.jinja_string(template, extra_vars)
         elif isinstance(template, list):
@@ -88,7 +88,7 @@ class Context:
         else:
             return template
 
-    def jinja_string(self, template: str, extra_vars: dict = None) -> str:
+    def jinja_string(self, template: str, extra_vars: Optional[dict] = None) -> str:
         if isinstance(template, str):
             vars = self.variables
             if extra_vars:
@@ -97,13 +97,13 @@ class Context:
         else:
             return template
 
-    def jinja_file(self, template_path: str, extra_vars: dict = None) -> str:
+    def jinja_file(self, template_path: str, extra_vars: Optional[dict] = None) -> str:
         vars = self.variables
         if extra_vars:
             vars = {**vars, **extra_vars}
         return self.jinja_env.get_template(template_path).render(vars)
 
-    def duration(self, start: float = None):
+    def duration(self, start: Optional[float] = None):
         if start is None:
             start = self.start
 

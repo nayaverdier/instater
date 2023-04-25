@@ -22,8 +22,8 @@ class ShellResult:
 
 def shell(
     command: Union[str, List[str]],
-    directory: Union[str, Path] = None,
-    become: str = None,
+    directory: Optional[Union[str, Path]] = None,
+    become: Optional[str] = None,
     valid_return_codes: Optional[Iterable[int]] = (0,),
 ) -> ShellResult:
     if become:
@@ -181,7 +181,7 @@ def update_file_metadata(
 
     if chown:
         if not context.dry_run:
-            shutil.chown(path, owner, group)
+            shutil.chown(path, user=owner, group=group)  # type: ignore
         updated = True
 
     current_mode = path.stat().st_mode & 0o777

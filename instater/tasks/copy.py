@@ -2,7 +2,7 @@ import shlex
 import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Union
+from typing import Optional, Union
 from urllib.request import urlopen
 
 from .. import util
@@ -20,15 +20,15 @@ class Copy(Task):
     def __init__(
         self,
         *,
-        src: str = None,
-        content: str = None,
-        url: str = None,
+        src: Optional[str] = None,
+        content: Optional[str] = None,
+        url: Optional[str] = None,
         dest: str,
-        owner: str = None,
-        group: str = None,
-        mode: Union[str, int] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        mode: Optional[Union[str, int]] = None,
         is_template: util.Bool = False,
-        validate: str = None,
+        validate: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)

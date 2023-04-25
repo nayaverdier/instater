@@ -1,6 +1,7 @@
 import pkgutil
 import sys
 from pathlib import Path
+from typing import Set
 
 
 def _import_exception_handler(module_name: str):
@@ -8,7 +9,7 @@ def _import_exception_handler(module_name: str):
     raise
 
 
-_loaded = set()
+_loaded: Set[str] = set()
 
 
 def import_submodules(module_name: str):
@@ -16,6 +17,7 @@ def import_submodules(module_name: str):
         return
 
     module = sys.modules[module_name]
+    assert module.__file__
 
     path = Path(module.__file__).parent.resolve()
     prefix = module.__name__

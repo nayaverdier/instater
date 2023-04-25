@@ -1,18 +1,19 @@
 import time
+from typing import Dict, Optional, Type
 
 from ..context import Context
 from ..exceptions import InstaterError
 from ..util import snake_case
 
-TASKS = {}
+TASKS: Dict[str, Type["Task"]] = {}
 
 
 class Task:
     def __init__(
         self,
-        name: str = None,
-        when: str = None,
-        register: str = None,
+        name: Optional[str] = None,
+        when: Optional[str] = None,
+        register: Optional[str] = None,
     ):
         self.name = name or "Unnamed " + snake_case(type(self).__name__)
         self.when = when

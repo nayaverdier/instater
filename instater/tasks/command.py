@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from .. import util
 from ..context import Context
@@ -9,10 +9,10 @@ class Command(Task):
     def __init__(
         self,
         command: Union[str, List[str]],
-        condition: str = None,
+        condition: Optional[str] = None,
         condition_code: int = 0,
-        become: str = None,
-        directory: str = None,
+        become: Optional[str] = None,
+        directory: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)

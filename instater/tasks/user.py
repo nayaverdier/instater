@@ -49,11 +49,11 @@ class User(Task):
     def __init__(
         self,
         user: str,
-        system: util.Bool = None,
-        create_home: util.Bool = None,
-        password: str = None,
-        shell: str = None,
-        groups: Union[str, List[str]] = None,
+        system: Optional[util.Bool] = None,
+        create_home: Optional[util.Bool] = None,
+        password: Optional[str] = None,
+        shell: Optional[str] = None,
+        groups: Optional[Union[str, List[str]]] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)

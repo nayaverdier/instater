@@ -3,7 +3,7 @@
 black = black instater tests
 flake8 = flake8 instater tests
 isort = isort instater tests
-mypy = mypy instater
+mypy = dmypy run -- instater tests
 install-pip = python -m pip install -U setuptools pip wheel
 test = pytest --cov=instater --cov-report term-missing tests/
 
