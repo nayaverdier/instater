@@ -3,7 +3,7 @@
 black = black instater tests
 flake8 = flake8 instater tests
 isort = isort instater tests
-mypy = dmypy run -- instater tests
+mypy = dmypy run -- instater tests --ignore-missing-imports --scripts-are-modules --check-untyped-defs --no-implicit-optional
 install-pip = python -m pip install -U setuptools pip wheel
 test = pytest --cov=instater --cov-report term-missing tests/
 
