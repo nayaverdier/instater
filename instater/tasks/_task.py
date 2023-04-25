@@ -22,6 +22,7 @@ class Task:
         TASKS[snake_case(cls.__name__)] = cls
 
     def run_task(self, context: Context) -> bool:
+        context.enter_task()
         context.print(f"TASK [{self.name}]", style="black bold on blue", justify="left")
 
         start = time.time()
@@ -36,9 +37,13 @@ class Task:
         if changed:
             context.statuses["changed"] += 1
             context.print(f"changed {duration}", style="yellow bold")
+            context.print()
+            context.exit_task_changed()
         else:
             context.statuses["skipped"] += 1
             context.print(f"skipped {duration}", style="blue")
+            context.print()
+            context.exit_task_skipped()
 
         if self.register:
             if self.register in context.variables:

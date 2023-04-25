@@ -2,7 +2,7 @@ import getpass
 import shutil
 from glob import glob
 from pathlib import Path
-from typing import Iterable, List, Union
+from typing import Iterable, List, Optional, Union
 
 import yaml  # type: ignore
 
@@ -22,7 +22,7 @@ def _print_start(context: Context, setup_file: Path):
         formatted_vars = " ".join(f"{key}={value!r}" for key, value in context.variables.items())
         context.print("Overridden variables:", formatted_vars, style="blue")
 
-    print()
+    context.print()
 
 
 def _get_raw_input(prompt: str, private: bool) -> str:
@@ -203,7 +203,7 @@ def _alert_pacman_manually_installed(context: Context):
     manually_installed = explicitly_installed_packages - packages
 
     if manually_installed:
-        print()
+        context.print()
         context.print(
             ":warning: The following packages were manually installed and are not accounted for by instater",
             style="yellow bold",
@@ -214,14 +214,22 @@ def _alert_pacman_manually_installed(context: Context):
 
 def run_tasks(
     setup_file,
-    override_variables: dict = None,
-    tags: Iterable[str] = None,
+    override_variables: Optional[dict] = None,
+    tags: Optional[Iterable[str]] = None,
     dry_run: bool = False,
+    quiet: bool = False,
     explain: bool = False,
     skip_tasks: bool = False,
 ):
     setup_file = Path(setup_file)
-    context = Context(setup_file.parent, override_variables or {}, tags or (), dry_run, explain)
+    context = Context(
+        root_directory=setup_file.parent,
+        extra_vars=override_variables or {},
+        tags=tags or (),
+        dry_run=dry_run,
+        quiet=quiet,
+        explain=explain,
+    )
 
     if not setup_file.exists():
         raise InstaterError(f"Setup file does not exist: {setup_file}")
@@ -241,9 +249,9 @@ def run_tasks(
     _load_tasks(setup_data.get("tasks"), context)
 
     if not skip_tasks:
-        for task in context.tasks:
-            task.run_task(context)
-            print()
+        with context.console.status("Running tasks...", spinner="dots"):
+            for task in context.tasks:
+                task.run_task(context)
 
     context.print_summary()
 

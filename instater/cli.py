@@ -53,6 +53,7 @@ def main():
         action="store_true",
         help="Include messages for each task explaining why the task was changed or skipped",
     )
+    parser.add_argument("--quiet", "-q", action="store_true", help="Do not print skipped tasks")
     parser.add_argument("--version", action="store_true", help="Display the version of instater")
 
     args = parser.parse_args()
@@ -70,6 +71,7 @@ def main():
             override_variables=variables,
             tags=tags,
             dry_run=args.dry_run,
+            quiet=args.quiet,
             explain=args.explain,
             skip_tasks=args.skip_tasks,
         )
