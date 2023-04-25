@@ -191,7 +191,8 @@ def _include(context: Context, parent_tags: List[str], include: str, tags: Union
     _load_tasks(tasks, context, tags)
 
 
-def _alert_pacman_manually_installed(context: Context):
+def _alert_pacman_manually_installed(bootstrapped_packages: Optional[List[str]], context: Context):
+    ignore_packages = set(bootstrapped_packages or ())
     packages = set()
 
     for task in context.tasks:
@@ -200,7 +201,7 @@ def _alert_pacman_manually_installed(context: Context):
                 packages.update(pacman.get_package_or_group_packages(package))
 
     explicitly_installed_packages = pacman.get_explicitly_installed_packages()
-    manually_installed = explicitly_installed_packages - packages
+    manually_installed = explicitly_installed_packages - packages - ignore_packages
 
     if manually_installed:
         context.print()
@@ -257,6 +258,7 @@ def run_tasks(
 
     # Don't run this check when a subset of tags were passed in, since not all tasks are loaded
     if not tags and shutil.which("pacman"):
-        _alert_pacman_manually_installed(context)
+        with context.console.status("Checking for untracked pacman packages...", spinner="dots"):
+            _alert_pacman_manually_installed(setup_data.get("pacman_bootstrapped_packages"), context)
 
     return context
