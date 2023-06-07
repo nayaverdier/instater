@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.0 2023-06-06
+
+- Automatically convert int/float from templated variables, instead of being strings
+- `become` the `makepkg` user for running `yay` (hardcoded for now)
+
 ## 0.12.0 2023-04-24
 
 - Add `pacman_bootstrapped_packages` option to ignore certain packages from the

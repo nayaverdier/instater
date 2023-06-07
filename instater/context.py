@@ -80,20 +80,39 @@ class Context:
             else:
                 self.console.print(*args, **kwargs)
 
-    def jinja_object(self, template: object, extra_vars: Optional[dict] = None) -> object:
+    def jinja_object(
+        self,
+        template: object,
+        extra_vars: Optional[dict] = None,
+        convert_numbers: bool = False,
+    ) -> object:
         if isinstance(template, str):
-            return self.jinja_string(template, extra_vars)
+            return self.jinja_string(template, extra_vars, convert_numbers=convert_numbers)
         elif isinstance(template, list):
-            return [self.jinja_object(item, extra_vars) for item in template]
+            return [self.jinja_object(item, extra_vars, convert_numbers=convert_numbers) for item in template]
         else:
             return template
 
-    def jinja_string(self, template: str, extra_vars: Optional[dict] = None) -> str:
+    def jinja_string(self, template: str, extra_vars: Optional[dict] = None, convert_numbers: bool = False) -> str:
         if isinstance(template, str):
             vars = self.variables
             if extra_vars:
                 vars = {**vars, **extra_vars}
-            return self.jinja_env.from_string(template).render(vars)
+
+            value = self.jinja_env.from_string(template).render(vars)
+
+            if convert_numbers:
+                try:
+                    return int(value)  # type: ignore
+                except ValueError:
+                    pass
+
+                try:
+                    return float(value)  # type: ignore
+                except ValueError:
+                    pass
+
+            return value
         else:
             return template
 

@@ -60,7 +60,8 @@ class Pacman(Task):
             self._makepkg_install_package(package)
 
     def _yay_install(self, packages: List[str]):
-        util.shell(["yay", "-Sy", "--noconfirm", "--needed", "--cleanafter", *packages])
+        # TODO: make the `makepkg` user configurable
+        util.shell(["yay", "-Sy", "--noconfirm", "--needed", "--cleanafter", *packages], become="makepkg")
 
     def _pacman_install(self, packages: List[str]):
         util.shell(["pacman", "-Sy", "--noconfirm", "--noprogressbar", "--needed", *packages])

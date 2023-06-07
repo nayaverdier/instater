@@ -92,7 +92,7 @@ def _file_variables(files, context: Context):
             raw_vars = yaml.safe_load(f)
 
         for var, value in raw_vars.items():
-            context.variables[var] = context.jinja_string(value)
+            context.variables[var] = context.jinja_object(value, convert_numbers=True)
 
 
 def _extract_with(context: Context, task_args: dict) -> List[dict]:
