@@ -1,6 +1,8 @@
-from ..importer import import_submodules
+# isort: off
 from ._task import TASKS, Task
 
-import_submodules(__name__)
+# isort: on
+
+from . import command, copy, debug, file, git, group, pacman, service, user  # noqa: F401
 
 __all__ = ["TASKS", "Task"]

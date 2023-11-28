@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.1 2023-11-28
+
+- Add support for python3.12
+
 ## 0.13.0 2023-06-06
 
 - Automatically convert int/float from templated variables, instead of being strings
